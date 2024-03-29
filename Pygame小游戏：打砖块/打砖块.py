@@ -7,7 +7,7 @@ import sys
 import os
 
 pygame.init()
-
+# 创建图形化窗口
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,25)
 
 canvas = pygame.display.set_mode((1000,600))
