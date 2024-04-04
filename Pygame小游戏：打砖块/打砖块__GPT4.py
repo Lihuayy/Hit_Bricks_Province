@@ -4,7 +4,8 @@ import random
 # 初始化pygame
 pygame.init()
 
-# 定义常数
+
+# 设置各项参数
 SCREEN_WIDTH = 1500
 SCREEN_HEIGHT = 720
 BRICK_WIDTH = 80
@@ -17,9 +18,8 @@ BRICK_COLOR = (200, 200, 0)
 BALL_COLOR = (255, 0, 0)
 PADDLE_COLOR = (0, 255, 0)
 FPS = 60
-# 设置窗口模式和启用双缓冲
+# 设置窗口模式和启用双缓冲，此项设置是为了防止屏幕刷新引起的异常游戏体验
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.DOUBLEBUF)
-
 
 
 # 设置屏幕
@@ -51,11 +51,11 @@ paddle = pygame.Rect((SCREEN_WIDTH - PADDLE_WIDTH) // 2, SCREEN_HEIGHT - PADDLE_
 
 # 创建球
 ball = pygame.Rect(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, BALL_RADIUS, BALL_RADIUS)
-ball_speed_x = 6 * random.choice((1, -1))
-ball_speed_y = -6
+ball_speed_x = 6 * random.choice((1, -1))  #ball_speed为球的速度，x为x轴
+ball_speed_y = -6                          #ball_speed为球的速度，y为y轴
 
 
-# 游戏循环
+# 游戏主循环
 clock = pygame.time.Clock()
 running = True
 while running:
@@ -71,14 +71,13 @@ while running:
     if keys[pygame.K_RIGHT] and paddle.right < SCREEN_WIDTH:
         paddle.right += 20  # 球拍移动速度
 
-
     # 移动球
     ball.left += ball_speed_x
     ball.top += ball_speed_y
     if ball.left <= 0 or ball.right >= SCREEN_WIDTH:
-        ball_speed_x *= -1
+        ball_speed_x *= -1      #球速
     if ball.top <= 0:
-        ball_speed_y *= -1
+        ball_speed_y *= -1      #球速
     if ball.colliderect(paddle) and ball_speed_y > 0:
         ball_speed_y *= -1
 
@@ -88,8 +87,6 @@ while running:
             bricks.remove(brick)
             ball_speed_y *= -1
             break
-
-
 
         # 画面更新 - 开始
         if background_image:
@@ -103,13 +100,13 @@ while running:
         screen.blit(paddle_image, paddle)  # 绘制球拍图像
         screen.blit(ball_image, ball)  # 绘制球图像
 
-        # 更新屏幕
+    # 更新屏幕 - 结束
     pygame.display.flip()
     # 绘制砖块
     for brick in bricks:
         screen.blit(brick_image, brick.topleft)
 
-        # 检查游戏是否结束
+    # 检查游戏是否结束
         if ball.bottom >= SCREEN_HEIGHT:
             print("游戏结束！")
             running = False
