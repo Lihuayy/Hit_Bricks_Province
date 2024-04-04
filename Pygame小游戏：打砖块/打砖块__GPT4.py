@@ -51,8 +51,8 @@ paddle = pygame.Rect((SCREEN_WIDTH - PADDLE_WIDTH) // 2, SCREEN_HEIGHT - PADDLE_
 
 # 创建球
 ball = pygame.Rect(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, BALL_RADIUS, BALL_RADIUS)
-ball_speed_x = 4 * random.choice((1, -1))
-ball_speed_y = -4
+ball_speed_x = 6 * random.choice((1, -1))
+ball_speed_y = -6
 
 
 # 游戏循环
