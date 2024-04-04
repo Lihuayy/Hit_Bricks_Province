@@ -5,10 +5,10 @@ import random
 pygame.init()
 
 # 定义常数
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-BRICK_WIDTH = 60
-BRICK_HEIGHT = 20
+SCREEN_WIDTH = 1500
+SCREEN_HEIGHT = 720
+BRICK_WIDTH = 80
+BRICK_HEIGHT = 40
 PADDLE_WIDTH = 100
 PADDLE_HEIGHT = 20
 BALL_RADIUS = 10
@@ -17,10 +17,27 @@ BRICK_COLOR = (200, 200, 0)
 BALL_COLOR = (255, 0, 0)
 PADDLE_COLOR = (0, 255, 0)
 FPS = 60
+# 设置窗口模式和启用双缓冲
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.DOUBLEBUF)
+
+
 
 # 设置屏幕
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("打砖块游戏")
+
+# 加载并缩放背景图像
+background_image = pygame.image.load('images_02/background.jpg')
+background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+# 加载并缩放球拍图像
+paddle_image = pygame.image.load('images_02/paddle.jpg')
+paddle_image = pygame.transform.scale(paddle_image, (PADDLE_WIDTH, PADDLE_HEIGHT))
+# 加载并缩放球图像
+ball_image = pygame.image.load('images_02/ball.jpg')
+ball_image = pygame.transform.scale(ball_image, (BALL_RADIUS * 2, BALL_RADIUS * 2))  # 乘以2因为直径是半径的两倍
+brick_image = pygame.image.load('images_02/brick_image.jpg')
+brick_image = pygame.transform.scale(brick_image, (BRICK_WIDTH, BRICK_HEIGHT))
+
 
 # 创建砖块
 bricks = []
@@ -37,6 +54,7 @@ ball = pygame.Rect(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, BALL_RADIUS, BALL_RADI
 ball_speed_x = 4 * random.choice((1, -1))
 ball_speed_y = -4
 
+
 # 游戏循环
 clock = pygame.time.Clock()
 running = True
@@ -49,9 +67,10 @@ while running:
     # 移动球拍
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT] and paddle.left > 0:
-        paddle.left -= 6
+        paddle.left -= 20  # 球拍移动速度
     if keys[pygame.K_RIGHT] and paddle.right < SCREEN_WIDTH:
-        paddle.right += 6
+        paddle.right += 20  # 球拍移动速度
+
 
     # 移动球
     ball.left += ball_speed_x
@@ -70,19 +89,30 @@ while running:
             ball_speed_y *= -1
             break
 
-    # 检查游戏是否结束
-    if ball.bottom >= SCREEN_HEIGHT:
-        print("游戏结束！")
-        running = False
 
-    # 画面更新
-    screen.fill((0, 0, 0))
-    for brick in bricks:
-        pygame.draw.rect(screen, BRICK_COLOR, brick)
-    pygame.draw.rect(screen, PADDLE_COLOR, paddle)
-    pygame.draw.circle(screen, BALL_COLOR, ball.center, BALL_RADIUS)
+
+        # 画面更新 - 开始
+        if background_image:
+            screen.blit(background_image, (0, 0))
+        else:
+            screen.fill((0, 0, 0))  # 只有在没有背景图像时才需要填充背景颜色
+
+        # 绘制所有游戏元素
+        for brick in bricks:
+            screen.blit(brick_image, brick)  # 绘制砖块图像
+        screen.blit(paddle_image, paddle)  # 绘制球拍图像
+        screen.blit(ball_image, ball)  # 绘制球图像
+
+        # 更新屏幕
     pygame.display.flip()
+    # 绘制砖块
+    for brick in bricks:
+        screen.blit(brick_image, brick.topleft)
 
+        # 检查游戏是否结束
+        if ball.bottom >= SCREEN_HEIGHT:
+            print("游戏结束！")
+            running = False
     # 控制游戏刷新速率
     clock.tick(FPS)
 
