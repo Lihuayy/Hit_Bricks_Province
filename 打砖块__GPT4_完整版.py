@@ -1,9 +1,12 @@
 import pygame
 import random
 
+#当前代码为不完整
 # 初始化pygame
 pygame.init()
 
+# 游戏状态
+game_state = 'start'  # 可能的状态：'start', 'playing', 'paused', 'game_over'
 
 # 设置各项参数
 SCREEN_WIDTH = 1500
@@ -22,7 +25,7 @@ FPS = 60
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.DOUBLEBUF)
 
 
-# 设置屏幕
+# 设置屏幕大小
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("打砖块游戏")
 
@@ -55,6 +58,8 @@ ball_speed_x = 6 * random.choice((1, -1))  #ball_speed为球的速度，x为x轴
 ball_speed_y = -6                          #ball_speed为球的速度，y为y轴
 
 
+
+
 # 游戏主循环
 clock = pygame.time.Clock()
 running = True
@@ -63,30 +68,46 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_SPACE and game_state == 'start':
+            game_state = 'playing'
+        if event.key == pygame.K_p:
+            if game_state == 'playing':
+                game_state = 'paused'
+            elif game_state == 'paused':
+                game_state = 'playing'
+        if event.key == pygame.K_r:
+            game_state = 'playing'
+            # 重置游戏状态的代码 (重置球的位置、速度等)
+            ball.left = SCREEN_WIDTH // 2 - BALL_RADIUS
+            ball.top = SCREEN_HEIGHT // 2 - BALL_RADIUS
+            ball_speed_x = 4 * random.choice((1, -1))
+            ball_speed_y = -4
+        # 更新游戏状态
+    if game_state == 'playing':
+        # 移动球拍
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and paddle.left > 0:
+            paddle.left -= 20  # 球拍移动速度
+        if keys[pygame.K_RIGHT] and paddle.right < SCREEN_WIDTH:
+            paddle.right += 20  # 球拍移动速度
 
-    # 移动球拍
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and paddle.left > 0:
-        paddle.left -= 20  # 球拍移动速度
-    if keys[pygame.K_RIGHT] and paddle.right < SCREEN_WIDTH:
-        paddle.right += 20  # 球拍移动速度
-
-    # 移动球
-    ball.left += ball_speed_x
-    ball.top += ball_speed_y
-    if ball.left <= 0 or ball.right >= SCREEN_WIDTH:
-        ball_speed_x *= -1      #球速
-    if ball.top <= 0:
-        ball_speed_y *= -1      #球速
-    if ball.colliderect(paddle) and ball_speed_y > 0:
-        ball_speed_y *= -1
-
-    # 检查球是否击中砖块
-    for brick in bricks[:]:
-        if ball.colliderect(brick):
-            bricks.remove(brick)
+        # 移动球
+        ball.left += ball_speed_x
+        ball.top += ball_speed_y
+        if ball.left <= 0 or ball.right >= SCREEN_WIDTH:
+            ball_speed_x *= -1      #球速
+        if ball.top <= 0:
+            ball_speed_y *= -1      #球速
+        if ball.colliderect(paddle) and ball_speed_y > 0:
             ball_speed_y *= -1
-            break
+
+        # 检查球是否击中砖块
+        for brick in bricks[:]:
+            if ball.colliderect(brick):
+                bricks.remove(brick)
+                ball_speed_y *= -1
+                break
 
         # 画面更新 - 开始
         if background_image:
@@ -100,7 +121,7 @@ while running:
         screen.blit(paddle_image, paddle)  # 绘制球拍图像
         screen.blit(ball_image, ball)  # 绘制球图像
 
-    # 更新屏幕 - 结束
+    # 画面更新 - 结束
     pygame.display.flip()
     # 绘制砖块
     for brick in bricks:
