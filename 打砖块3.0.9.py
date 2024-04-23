@@ -308,7 +308,7 @@ class Brick(pygame.sprite.Sprite):
 class Ball(pygame.sprite.Sprite):
     def __init__(self, x, y, dx, dy):
         super().__init__()
-        self.image = pygame.image.load("images_03/ball.png").convert()
+        self.image = pygame.image.load("ball.png").convert()
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.x = x
